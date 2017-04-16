@@ -1,6 +1,6 @@
 import unittest
 import json
-from flask import Flask, Blueprint, redirect, views, abort as flask_abort
+from flask import Flask, Blueprint, redirect, views
 from flask.signals import got_request_exception, signals_available
 try:
     from mock import Mock
@@ -805,10 +805,9 @@ class APITestCase(unittest.TestCase):
 
         class Foo1(flask_restful.Resource):
             def get(self):
-                flask_abort(304, etag='myETag')
+                raise NotModified(etag='myETag')
 
         api.add_resource(Foo1, '/foo')
-        flask_abort.mapping.update({304: NotModified})
 
         with app.test_client() as client:
             foo = client.get('/foo')
